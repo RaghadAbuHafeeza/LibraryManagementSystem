@@ -1,0 +1,154 @@
+﻿@model List<LMS_LibraryManagementSystem_.Models.Book>
+@section Title {
+Books List
+}
+@section SubTitle {
+Show
+}
+@section Buttons {
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a asp-controller="Books" asp-action="Create" class="btn btn-primary">Add</a>
+    }
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+        No Data Found
+    </div>
+}
+else
+{
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Genre</th>
+                    <th>Published Date</th>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <th style="width: 26%;">Actions</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.Genre</td>
+                        <td>@book.PublishedDate.ToString("dd/MM/yyyy")</td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <td>
+                                <input type="hidden" id="Id" name="Id" value="@book.Id" />
+
+                                <a class="btn btn-info btn-sm" asp-controller="Books" asp-action="Details" asp-route-id="@book.Id">
+                                    <i class="fas fa-info-circle"></i>
+                                    Details
+                                </a>
+                                <a class="btn btn-warning btn-sm" asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm js-delete" href="#" data-id="@book.Id">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
+                            </td>
+
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Select all delete buttons with the class .js-delete and add a click event listener to each button
+        document.querySelectorAll(".js-delete").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const id = btn.dataset.id; // Get the ID of the book from the data-id attribute
+
+                // Display a confirmation dialog using SweetAlert
+                Swal.fire({
+                    title: "Are you sure?", // Confirmation dialog title
+                    text: "You won't be able to revert this!", // Confirmation message
+                    icon: "warning", // Type of dialog (warning)
+                    showCancelButton: true, // Show cancel button
+                    confirmButtonColor: "#3085d6", // Color of the confirm button
+                    cancelButtonColor: "#d33", // Color of the cancel button
+                    confirmButtonText: "Yes, delete it!" // Text for the confirm button
+                }).then(async (result) => {
+                    // If the user confirms the action
+                    if (result.isConfirmed) {
+                        // Send a POST request to delete the book
+                        const response = await fetch(`/Books/Delete/${id}`, {
+                            method: 'POST',
+                        });
+
+                        // Check if the response is OK (successful)
+                        if (response.ok) {
+                            const row = btn.closest("tr"); // Find the closest table row (tr) for the book
+                            row.remove(); // Remove the row from the table
+
+                            // Check if there are any remaining books
+                            const remainingRows = document.querySelectorAll("tbody tr").length;
+                            if (remainingRows === 0) {
+                                // If there are no remaining rows, replace the table with an alert message
+                                document.querySelector(".card-body").innerHTML = `
+                                                    <div class="alert alert-warning alert-dismissible">
+                                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                                        <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+                                                        No Data Found
+                                                    </div>
+                                                `;
+                            }
+
+                            // Display a success message using SweetAlert
+                            Swal.fire({
+                                icon: 'success', // Type of dialog (success)
+                                title: 'Book Deleted Successfully', // Success message title
+                                showConfirmButton: false, // Do not show the confirm button
+                                timer: 1500 // Auto close the dialog after 1500 milliseconds (1.5 seconds)
+                            });
+                        } else {
+                            // If there was an error deleting the book, display an error message
+                            Swal.fire(
+                                'Error!', // Error message title
+                                'There was an error deleting the book.', // Error message text
+                                'error' // Type of dialog (error)
+                            );
+                        }
+                    }
+                });
+            });
+        });
+
+        // When the Title input field loses focus
+        $('#Title').on('blur', function () {
+            var title = $(this).val(); // Get the value of the Title input field
+            var id = $('#Id').val(); // Get the hidden Id value
+            $.ajax({
+                url: '/Books/CheckName', // URL to send the request to
+                type: 'POST', // Type of request
+                data: { title: title, id: id }, // Data to send in the request
+                success: function (response) {
+                    // If the response indicates the title already exists
+                    if (!response.success) {
+                        alert(response.message);  // Show an alert with the message
+                    }
+                }
+            });
+        });
+    </script>
+}
+

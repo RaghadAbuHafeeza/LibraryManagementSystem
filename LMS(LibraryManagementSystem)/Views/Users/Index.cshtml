@@ -1,0 +1,55 @@
+﻿@using LMS_LibraryManagementSystem_.ViewModel
+@model List<ApplicationUserVM>
+@section Title {
+Users
+}
+@section SubTitle {
+Show
+}
+
+@section Buttons {
+    <a asp-controller="Users" asp-action="Create" class="btn btn-primary">Add</a>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+        No Data Found
+    </div>
+}
+else
+{
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>User Name</th> 
+                    <th>Email</th> 
+                    <th>Address</th> 
+                    <th>Phone Number</th>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <th>Roles</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td>@item.Email</td> 
+                        <td>@item.Address</td> 
+                        <td>@item.PhoneNumber</td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                          <td>@string.Join(", ",item.Roles)</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

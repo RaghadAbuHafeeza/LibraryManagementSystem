@@ -1,0 +1,133 @@
+﻿@using LMS_LibraryManagementSystem_.ViewModel
+@model List<RoleVM>
+@section Title {
+Roles
+}
+@section SubTitle {
+Show
+}
+
+@section Buttons {
+    <a asp-controller="Roles" asp-action="Create" class="btn btn-primary">Add</a>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+        No Data Found
+    </div>
+}
+else
+{
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th style="width: 10%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger js-delete" data-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Check if there's a success message in TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </text>
+        }
+
+        // Add click event listeners to all delete buttons with the class .js-delete
+        document.querySelectorAll(".js-delete").forEach((btn) => {
+            btn.addEventListener("click", async (event) => {
+                event.preventDefault(); // Prevent the default action of the button
+
+                const id = btn.dataset.id; // Get the ID from the data-id attribute
+
+                // Display SweetAlert to confirm deletion
+                const result = await Swal.fire({
+                    title: "Are you sure?", // Confirmation dialog title
+                    text: "You won't be able to revert this!", // Confirmation message
+                    icon: "warning", // Type of dialog (warning)
+                    showCancelButton: true, // Show cancel button
+                    confirmButtonColor: "#3085d6", // Color of the confirm button
+                    cancelButtonColor: "#d33", // Color of the cancel button
+                    confirmButtonText: "Yes, delete it!" // Text for the confirm button
+                });
+
+                // If the user confirms the action
+                if (result.isConfirmed) {
+                    // Send a POST request to delete the role
+                    const response = await fetch(`/Roles/Delete/${id}`, {
+                        method: 'POST', // Specify the request method as POST
+                    });
+
+                    // Check if the response is OK (successful)
+                    if (response.ok) {
+                        const row = btn.closest("tr"); // Find the closest table row (tr) for the role
+                        row.remove(); // Remove the row from the table
+
+                        // Display a success message using SweetAlert
+                        Swal.fire({
+                            icon: 'success', // Type of dialog (success)
+                            title: 'Role Deleted Successfully', // Success message title
+                            showConfirmButton: false, // Do not show the confirm button
+                            timer: 1500 // Auto close the dialog after 1500 milliseconds (1.5 seconds)
+                        });
+                    } else {
+                        // If there was an error deleting the role, display an error message
+                        Swal.fire(
+                            'Error!', // Error message title
+                            'There was an error deleting the role.', // Error message text
+                            'error' // Type of dialog (error)
+                        );
+                    }
+                }
+            });
+        });
+
+        // Additional functionality to check if the title already exists
+        $('#Title').on('blur', function () {
+            var title = $(this).val(); // Get the value of the Title input field
+            var id = $('#Id').val(); // Get the hidden Id value
+            $.ajax({
+                url: '/Books/CheckName', // URL to send the request to
+                type: 'POST', // Type of request
+                data: { title: title, id: id }, // Data to send in the request
+                success: function (response) {
+                    // If the response indicates the title already exists
+                    if (!response.success) {
+                        alert(response.message); // Show an alert with the message
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+
+
+

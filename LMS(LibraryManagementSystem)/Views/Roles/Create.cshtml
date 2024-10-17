@@ -1,0 +1,28 @@
+﻿@using LMS_LibraryManagementSystem_.ViewModel
+@model RoleVM
+@section Title {
+Roles
+}
+@section SubTitle {
+Create 
+}
+
+<form asp-controller="Roles" asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Role Name</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="text-danger">@error.ErrorMessage</div>
+    }
+
+    <div class="form-group">
+        <input type="submit" value="Add" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 10px;">Back to List</a>
+

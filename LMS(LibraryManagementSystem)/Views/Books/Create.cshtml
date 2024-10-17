@@ -1,0 +1,41 @@
+﻿@model LMS_LibraryManagementSystem_.Models.Book
+@section Title {
+Books
+}
+@section SubTitle {
+    @(Model != null && Model.Id != 0 ? "Edit Book" : "Add New Book")
+}
+<form asp-controller="Books" asp-action="@(Model != null && Model.Id != 0 ? "Edit" : "Create")" method="post">
+    @if (Model?.Id != null) 
+    {
+        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+    }
+
+    <div class="form-group">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" id="Title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Author" class="control-label"></label>
+        <input asp-for="Author" class="form-control" />
+        <span asp-validation-for="Author" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Genre" class="control-label"></label>
+        <input asp-for="Genre" class="form-control" />
+        <span asp-validation-for="Genre" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PublishedDate" class="control-label"></label>
+        <input asp-for="PublishedDate" class="form-control" />
+        <span asp-validation-for="PublishedDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="@(Model != null && Model.Id != 0 ? "Update" : "Add")" class="btn btn-primary" />
+
+    </div>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary" style="margin-bottom: 10px;">Back to List</a>
+
