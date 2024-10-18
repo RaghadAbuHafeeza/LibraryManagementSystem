@@ -69,9 +69,6 @@ namespace LMS_LibraryManagementSystem_.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Address")]
             public string Address { get; set; }
-
-            [Display(Name = "Profile Picture")]
-            public IFormFile ProfilePicture { get; set; } // upload an image
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -85,19 +82,8 @@ namespace LMS_LibraryManagementSystem_.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            _logger.LogInformation("Started registration process");
-
-
-
-
             if (ModelState.IsValid)
             {
-                _logger.LogInformation("Model state is valid");
-
-
-
-
-
                 var user = new ApplicationUser 
                 { 
                     UserName = Input.Email, 
@@ -106,100 +92,26 @@ namespace LMS_LibraryManagementSystem_.Areas.Identity.Pages.Account
                     Address = Input.Address
                 };
 
-                if (Input.ProfilePicture != null && Input.ProfilePicture.Length > 0)
-                {
-                    _logger.LogInformation("Uploading profile picture");
-
-
-
-
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "~/Images", Input.ProfilePicture.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await Input.ProfilePicture.CopyToAsync(stream);
-                    }
-
-                    user.ProfilePicturePath = "~/Images/" + Input.ProfilePicture.FileName; 
-
-
-                    _logger.LogInformation("Profile picture uploaded successfully");
-
-
-
-
-
-                }
-
-
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-
-
-
-
-
-
-                    TempData["SuccessMessage"] = "Account created successfully!";
-
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    // Direct email confirmation
+                    user.EmailConfirmed = true;
+                    var result1 = await _userManager.UpdateAsync(user);
+                    if (result1.Succeeded)
                     {
-                        _logger.LogInformation("Redirecting to RegisterConfirmation page");
+                        // Store the success message in TempData to display on the login page
+                        TempData["SuccessMessage"] = "Account created successfully!<br />Please login to continue.";
 
-
-
-
-
-
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        _logger.LogInformation("User signed in successfully");
-
-
-
-
-                        return LocalRedirect(returnUrl);
+                        // Redirect to login page
+                        return RedirectToPage("/Account/Login", new { area = "Identity" });
                     }
                 }
                 foreach (var error in result.Errors)
                 {
-                    _logger.LogError("Error creating user: {0}", error.Description);
-
-
-
-
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            ////////////////////
-            else
-            {
-                _logger.LogWarning("Model state is invalid");
-            }
-
-            _logger.LogInformation("Registration process ended with failure");
-
-            ////////
-
-
-
-
-
 
             // If we got this far, something failed, redisplay form
             return Page();

@@ -12,11 +12,29 @@
     <link rel="stylesheet" href="~/Dashboard/plugins/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="~/Dashboard/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <link rel="stylesheet" href="~/Dashboard/dist/css/adminlte.min.css">
+
+        <style>
+        #success-alert {
+            position: absolute; 
+            top: 23%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 27%; 
+            z-index: 9999; 
+            text-align: center;
+            border-radius: 0.5rem; 
+        }
+    </style>
 </head>
 
 <body class="hold-transition login-page">
     <div class="login-box">
-
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @Html.Raw(TempData["SuccessMessage"])
+            </div>
+        }
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
                 <a href="../../index2.html" class="h1"><b>LMS</b></a>
@@ -56,11 +74,18 @@
                     </div>
                 </form>
             </div>
-
         </div>
-
     </div>
 
+    <script>
+        // Make the alert disappear after 3 seconds
+        setTimeout(function () {
+            var alert = document.getElementById('success-alert');
+            if (alert) {
+                alert.style.display = 'none';
+            }
+        }, 3000);
+    </script>
 </body>
 </html>
 
