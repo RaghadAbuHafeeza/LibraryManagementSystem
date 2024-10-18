@@ -9,7 +9,5 @@ namespace LMS_LibraryManagementSystem_.Models
         public string Address { get; set; }
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         public DateTime UpdatedOn { get; set; } = DateTime.Now;
-        public string ProfilePicturePath { get; set; } 
-
     }
 }

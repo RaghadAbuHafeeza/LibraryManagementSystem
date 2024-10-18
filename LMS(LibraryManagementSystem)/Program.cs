@@ -31,6 +31,8 @@ namespace LMS_LibraryManagementSystem_
             // 4)Add AutoMapper to automatically map between different object models in the project.
             builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
 
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

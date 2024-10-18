@@ -32,8 +32,16 @@ else
                     <th>Published Date</th>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <th style="width: 26%;">Actions</th>
+                        if (User.IsInRole("Admin"))
+                        {
+                            <th style="width: 26%;">Actions</th>
+                        }
+                        else
+                        {
+                            <th style="width: 11%;">Actions</th>
+                        }
                     }
+
                 </tr>
             </thead>
             <tbody>
@@ -53,6 +61,8 @@ else
                                     <i class="fas fa-info-circle"></i>
                                     Details
                                 </a>
+                                @if (User.IsInRole("Admin"))
+                                { 
                                 <a class="btn btn-warning btn-sm" asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id">
                                     <i class="fas fa-edit"></i>
                                     Edit
@@ -61,6 +71,7 @@ else
                                     <i class="fas fa-trash"></i>
                                     Delete
                                 </a>
+                                }
                             </td>
 
                         }

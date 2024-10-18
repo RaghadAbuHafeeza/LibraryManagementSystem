@@ -119,8 +119,7 @@ namespace LMS_LibraryManagementSystem_.Areas.Identity.Pages.Account
                         await Input.ProfilePicture.CopyToAsync(stream);
                     }
 
-                    // يمكنك هنا تخزين مسار الصورة في خاصية المستخدم إذا كنت ترغب في ذلك
-                    user.ProfilePicturePath = "~/Images/" + Input.ProfilePicture.FileName; // تأكد من إضافة هذه الخاصية في الـ ApplicationUser
+                    user.ProfilePicturePath = "~/Images/" + Input.ProfilePicture.FileName; 
 
 
                     _logger.LogInformation("Profile picture uploaded successfully");

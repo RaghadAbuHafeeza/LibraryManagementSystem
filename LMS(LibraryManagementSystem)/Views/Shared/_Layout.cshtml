@@ -232,15 +232,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
           </li>
 
-                        <li class="nav-item">
-                            <a asp-controller="Roles" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Roles
-                                    <span class="right badge badge-danger">New</span>
-                                </p>
-                            </a>
-                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Roles" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-th"></i>
+                                    <p>
+                                        Roles
+                                        <span class="right badge badge-danger">New</span>
+                                    </p>
+                                </a>
+                            </li>
+                        }
 
                         @if(User.IsInRole("Admin"))
                         {

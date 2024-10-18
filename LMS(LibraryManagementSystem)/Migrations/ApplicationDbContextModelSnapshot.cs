@@ -17,12 +17,12 @@ namespace LMS_LibraryManagementSystem_.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.19")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("LMS_LibraryManagementSystem_.Models.ApplicationUsers", b =>
+            modelBuilder.Entity("LMS_LibraryManagementSystem_.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -49,9 +49,6 @@ namespace LMS_LibraryManagementSystem_.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -74,6 +71,10 @@ namespace LMS_LibraryManagementSystem_.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -276,7 +277,7 @@ namespace LMS_LibraryManagementSystem_.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUsers", null)
+                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -285,7 +286,7 @@ namespace LMS_LibraryManagementSystem_.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUsers", null)
+                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -300,7 +301,7 @@ namespace LMS_LibraryManagementSystem_.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUsers", null)
+                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -309,7 +310,7 @@ namespace LMS_LibraryManagementSystem_.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUsers", null)
+                    b.HasOne("LMS_LibraryManagementSystem_.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
